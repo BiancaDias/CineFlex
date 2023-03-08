@@ -10,7 +10,6 @@ export default function HomePage({setMovie}) {
         const promisse = axios.get("https://mock-api.driven.com.br/api/v8/cineflex/movies");
         promisse.then(answer => {
             setFeaturedMovies(answer.data);
-            console.log(answer.data)
         });
         promisse.catch(error => {
             alert(error);
@@ -18,7 +17,7 @@ export default function HomePage({setMovie}) {
     }, [])
 
     if(featuredMovies.length === 0){
-        return <div>Carregando</div>
+        return <div>Carregando...</div>
     }
 
     function selectMovie(id){

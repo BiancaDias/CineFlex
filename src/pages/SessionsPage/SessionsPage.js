@@ -1,41 +1,42 @@
 import styled from "styled-components"
+import axios from "axios"
+import { useEffect, useState } from "react"
 
 export default function SessionsPage({movie}) {
+    const [sessions, setSessions] = useState([]);
+    useEffect(()=>{
+        const promisse = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/movies/${movie.id}/showtimes`);
+        promisse.then(answer => {
+            setSessions(answer.data);
+            console.log(answer.data)
+        });
+        promisse.catch(error =>{
+            alert(error);
+        })
+    },[])
+    if(sessions.length === 0){
+        return <div>Carregando...</div>
+    }
     return (
         <PageContainer>
             Selecione o horário
             <div>
-                <SessionContainer>
-                    Sexta - 03/03/2023
+                {sessions.days.map((s)=>
+                <SessionContainer key={s.id}>
+                    {s.weekday} - {s.date}
                     <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
+                        {s.showtimes.map((t) =><button key={t.id}>{t.name}</button>)}
                     </ButtonsContainer>
-                </SessionContainer>
+                </SessionContainer>)}
 
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
-
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
             </div>
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
+                    <p>{movie.title}</p>
                 </div>
             </FooterContainer>
 
