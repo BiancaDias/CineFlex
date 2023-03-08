@@ -1,26 +1,37 @@
 import styled from "styled-components"
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from "react-router-dom";
 
-export default function HomePage() {
+export default function HomePage({setMovie}) {
+    const [featuredMovies, setFeaturedMovies] = useState([]);
+
+    useEffect(() =>{
+        const promisse = axios.get("https://mock-api.driven.com.br/api/v8/cineflex/movies");
+        promisse.then(answer => {
+            setFeaturedMovies(answer.data);
+            console.log(answer.data)
+        });
+        promisse.catch(error => {
+            alert(error);
+        });
+    }, [])
+
+    if(featuredMovies.length === 0){
+        return <div>Carregando</div>
+    }
+
+    function selectMovie(id){
+        setMovie(featuredMovies[id-1]);
+    }
     return (
         <PageContainer>
-            Selecione o filme
 
             <ListContainer>
+                {featuredMovies.map((poster) =>
                 <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
+                    <Link to={"/sessoes/"+poster.id}><img onClick={() => selectMovie(poster.id)} key={poster.id} src={poster.posterURL} alt="poster"/></Link>
+                </MovieContainer>)}
             </ListContainer>
 
         </PageContainer>
