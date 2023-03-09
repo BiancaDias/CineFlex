@@ -47,7 +47,7 @@ export default function SeatsPage() {
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                {seat.seats.map((s)=><SeatItem onClick={() => reservation(s.id, s.isAvailable)} key={s.id} id={s.id} selectedSeats={selectedSeats} disponibilidade={s.isAvailable}>{s.name}</SeatItem>)}
+                {seat.seats.map((s)=><SeatItem onClick={() => reservation(s.id, s.isAvailable)} data-test="seat" key={s.id} id={s.id} selectedSeats={selectedSeats} disponibilidade={s.isAvailable}>{s.name}</SeatItem>)}
             </SeatsContainer>
 
             <CaptionContainer>
@@ -67,15 +67,15 @@ export default function SeatsPage() {
 
             <FormContainer>
                 Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+                <input data-test="client-name" placeholder="Digite seu nome..." />
 
                 CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+                <input data-test="client-cpf" placeholder="Digite seu CPF..." />
 
-                <button>Reservar Assento(s)</button>
+                <button data-test="book-seat-btn">Reservar Assento(s)</button>
             </FormContainer>
 
-            <FooterContainer>
+            <FooterContainer data-test="footer">
                 <div>
                     <img src={seat.movie.posterURL} alt="poster" />
                 </div>
