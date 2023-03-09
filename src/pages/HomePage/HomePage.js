@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom";
 
-export default function HomePage({setMovie}) {
+export default function HomePage() {
     const [featuredMovies, setFeaturedMovies] = useState([]);
 
     useEffect(() =>{
@@ -20,16 +20,13 @@ export default function HomePage({setMovie}) {
         return <div>Carregando...</div>
     }
 
-    function selectMovie(id){
-        setMovie(featuredMovies[id-1]);
-    }
     return (
         <PageContainer>
 
             <ListContainer>
                 {featuredMovies.map((poster) =>
-                <MovieContainer>
-                    <Link to={"/sessoes/"+poster.id}><img onClick={() => selectMovie(poster.id)} key={poster.id} src={poster.posterURL} alt="poster"/></Link>
+                <MovieContainer key={poster.id}>
+                    <Link to={"/sessoes/"+poster.id}><img key={poster.id} src={poster.posterURL} alt="poster"/></Link>
                 </MovieContainer>)}
             </ListContainer>
 

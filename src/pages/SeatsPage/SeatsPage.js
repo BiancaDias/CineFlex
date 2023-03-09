@@ -1,30 +1,66 @@
+import axios from "axios"
+import { useEffect, useState } from "react"
 import styled from "styled-components"
+import { Link, useParams } from "react-router-dom";
+const DISPONIVEL = "#C3CFD9"
+const DISPONIVEL_BORDA = "#808F9D"
+const SELECIONADO = "#1AAE9E"
+const SELECIONADO_BORDA = "#0E7D71"
+const INDISPONVIVEL = "#FBE192"
+const INDISPONVIVEL_BORDA = "#F7C52B"
 
 export default function SeatsPage() {
-
+    const [seat, setSeat] = useState([]);
+    const {idSessao} = useParams();
+    const [selectedSeats, setSelectedSeats] = useState([]);
+    useEffect(()=>{
+        const promisse = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`);
+        promisse.then(answer => {
+            setSeat(answer.data);
+            console.log(answer.data)
+        });
+        promisse.catch(error =>{
+            alert(error);
+        })
+    },[])
+    if(seat.length ===0){
+        return <div>Carregando...</div>
+    }
+    console.log(selectedSeats)
+    function reservation(id, isAvailable){
+        if(isAvailable === false){
+            alert("Esse assento não está disponível")
+            return;
+        }
+        if(selectedSeats.includes(id)){
+            const pos = selectedSeats.indexOf(id);
+            const newArray = selectedSeats
+            newArray.splice(pos, 1)
+            setSelectedSeats([...newArray])
+        }
+        else{
+            setSelectedSeats([...selectedSeats, id])
+        }
+    }
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+                {seat.seats.map((s)=><SeatItem onClick={() => reservation(s.id, s.isAvailable)} key={s.id} id={s.id} selectedSeats={selectedSeats} disponibilidade={s.isAvailable}>{s.name}</SeatItem>)}
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle background={SELECIONADO} borda={SELECIONADO_BORDA}/>
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle background={DISPONIVEL} borda={DISPONIVEL_BORDA} />
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle background={INDISPONVIVEL} borda={INDISPONVIVEL_BORDA}/>
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
@@ -41,11 +77,11 @@ export default function SeatsPage() {
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={seat.movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
+                    <p>{seat.movie.title}</p>
+                    <p>{seat.day.weekday} - {seat.name}</p>
                 </div>
             </FooterContainer>
 
@@ -96,8 +132,8 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${props => props.borda};         
+    background-color: ${props => props.background};    
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -113,8 +149,32 @@ const CaptionItem = styled.div`
     font-size: 12px;
 `
 const SeatItem = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${props =>{
+        if(props.selectedSeats.includes(props.id)){
+            return SELECIONADO_BORDA;
+        }
+        else{
+            switch(props.disponibilidade){
+                case false:
+                    return INDISPONVIVEL_BORDA
+                default:
+                    return DISPONIVEL_BORDA
+        }
+        }
+    }};      
+    background-color: ${props =>{
+        if(props.selectedSeats.includes(props.id)){
+            return SELECIONADO;
+        }
+        else{
+            switch(props.disponibilidade){
+                case false:
+                    return INDISPONVIVEL
+                default:
+                    return DISPONIVEL
+            }
+        }
+    }};
     height: 25px;
     width: 25px;
     border-radius: 25px;

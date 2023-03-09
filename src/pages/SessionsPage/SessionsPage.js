@@ -1,14 +1,15 @@
 import styled from "styled-components"
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { Link, useParams } from "react-router-dom";
 
-export default function SessionsPage({movie}) {
+export default function SessionsPage() {
     const [sessions, setSessions] = useState([]);
+    const {idFilme} = useParams();
     useEffect(()=>{
-        const promisse = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/movies/${movie.id}/showtimes`);
+        const promisse = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`);
         promisse.then(answer => {
             setSessions(answer.data);
-            console.log(answer.data)
         });
         promisse.catch(error =>{
             alert(error);
@@ -24,8 +25,8 @@ export default function SessionsPage({movie}) {
                 {sessions.days.map((s)=>
                 <SessionContainer key={s.id}>
                     {s.weekday} - {s.date}
-                    <ButtonsContainer>
-                        {s.showtimes.map((t) =><button key={t.id}>{t.name}</button>)}
+                    <ButtonsContainer >
+                        {s.showtimes.map((t) =><Link key={t.id} to={"/assentos/"+t.id}><button key={t.id}>{t.name}</button></Link>)}
                     </ButtonsContainer>
                 </SessionContainer>)}
 
@@ -33,10 +34,10 @@ export default function SessionsPage({movie}) {
 
             <FooterContainer>
                 <div>
-                    <img src={movie.posterURL} alt="poster" />
+                    <img src={sessions.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>{movie.title}</p>
+                    <p>{sessions.title}</p>
                 </div>
             </FooterContainer>
 
