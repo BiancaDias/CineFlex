@@ -58,7 +58,7 @@ export default function SeatsPage({setReserveInformation}) {
       
             setReserveInformation({
                 movie: seat.movie.title,
-                day: seat.day.weekday,
+                day: seat.day.date,
                 time: seat.name,
                 seats: [...seatName],
                 name: name,
